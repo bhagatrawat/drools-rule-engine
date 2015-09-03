@@ -1,0 +1,44 @@
+package com.bhagat.drools;
+
+import com.bhagat.drools.domain.Cart;
+import com.bhagat.drools.domain.CartItem;
+import com.bhagat.drools.constant.CartStatus;
+import com.bhagat.drools.domain.PendingItems;
+
+rule "Print Cart Issues" salience -1
+	when
+		$cart : Cart()
+	then
+		if ($cart.hasIssues()) {
+			System.out.println("\nPrint Cart Issues Rule");
+			System.out.println("************************************");
+			System.out.println($cart.getCartIssues());
+			insert($cart.getPendingItems());
+		}
+end
+
+rule "Print Pending Items"
+	when
+		$pendingItems : PendingItems()
+	then
+		System.out.println("\nPrint Pending Items Rule");
+		System.out.println("************************************");
+		for (CartItem cartItem : $pendingItems.getCartItems()) {
+			System.out.println(cartItem);
+		}
+	end
+
+rule "Mark the items processed" salience -2
+	when
+	$cart : Cart()
+	then
+		System.out.println("\nMark the items processed Rule");
+		System.out.println("************************************");
+		for (CartItem cartItem : $cart.getCartItems()) {
+			if (cartItem.getCartStatus() != CartStatus.NEW || cartItem.getCartStatus() != CartStatus.PENDING) {
+				cartItem.updateAsProcessed();
+				System.out.println(cartItem + " is processed");
+				update(cartItem);
+			}
+		}
+	end

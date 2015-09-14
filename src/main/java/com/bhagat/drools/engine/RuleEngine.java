@@ -20,12 +20,12 @@ import com.bhagat.drools.domain.CartItem;
 public class RuleEngine {
 	private static KieSession kSession = null;
 
-	public static int fireSingleRule(String rule) {
+	public static int fireSingleRule(final String ruleName) {
 		if (kSession != null) {
 
 			return kSession.fireAllRules(new AgendaFilter() {
 				public boolean accept(Match match) {
-					if ("If new, 2% discount".equalsIgnoreCase(match.getRule().getName())) {
+					if (ruleName!=null && ruleName.equalsIgnoreCase(match.getRule().getName())) {
 						System.out.println("Firing Rule: " + match.getRule().getName());
 						return true;
 					}
@@ -69,7 +69,7 @@ public class RuleEngine {
 		}
 	}
 
-	public static <I> void insert(I item) {
+	public static <I> void insert(final I item) {
 		kSession.insert(item);
 
 	}
@@ -82,7 +82,7 @@ public class RuleEngine {
 
 	}
 
-	public static <R> boolean isNotNull(List<R> coll) {
+	public static <R> boolean isNotNull(final List<R> coll) {
 		return coll != null && !coll.isEmpty() ? true : false;
 	}
 }
